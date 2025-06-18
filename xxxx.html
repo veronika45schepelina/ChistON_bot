@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЧистON</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A68A64;
+            --primary-light: #C4B6A0;
+            --primary-lighter: #E0D8CC;
+            --secondary: #D4A76A;
+            --accent: #8B7862;
+            --background: #F5F1EB;
+            --surface: #FFFFFF;
+            --error: #D32F2F;
+            --success: #388E3C;
+            --text-primary: #4A3F35;
+            --text-secondary: #8A7D6E;
+            --divider: #E0D8CC;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            padding: 16px;
+            max-width: 100%;
+            overflow-x: hidden;
+            line-height: 1.5;
+            padding-bottom: 70px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-avatar:active {
+            transform: scale(0.95);
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .card-title .icon {
+            font-size: 22px;
+        }
+
+        /* Progress */
+        .progress-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-label {
+            color: var(--text-secondary);
+        }
+
+        .progress-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--divider);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: 4px;
+            width: 65%;
+            position: relative;
+            transition: width 0.6s ease;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to right,
+                rgba(255,255,255,0.1) 0%,
+                rgba(255,255,255,0.6) 50%,
+                rgba(255,255,255,0.1) 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background-color: rgba(166, 138, 100, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 16px 12px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Activity Widgets */
+        .activity-widgets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .activity-widget {
+            background-color: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 120px;
+            justify-content: center;
+        }
+
+        .activity-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .activity-widget-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .activity-widget-title {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Tasks */
+        .task-list {
+            margin-top: 12px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--divider);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item:active {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .task-checkbox {
+            min-width: 24px;
+            height: 24px;
+            border: 2px solid var(--divider);
+            border-radius: 6px;
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .task-checkbox.checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .task-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .task-points {
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(166, 138, 100, 0.2);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-light);
+            box-shadow: 0 4px 8px rgba(166, 138, 100, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(166, 138, 100, 0.1);
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 4px rgba(212, 167, 106, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background-color: #E0B778;
+            box-shadow: 0 4px 8px rgba(212, 167, 106, 0.3);
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            box-shadow: 0 2px 4px rgba(139, 120, 98, 0.2);
+        }
+
+        .btn-accent:hover {
+            background-color: #9E8870;
+            box-shadow: 0 4px 8px rgba(139, 120, 98, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            box-shadow: 0 2px 4px rgba(56, 142, 60, 0.2);
+        }
+
+        .btn-success:hover {
+            background-color: #4CAF50;
+            box-shadow: 0 4px 8px rgba(56, 142, 60, 0.3);
+        }
+
+        .btn-icon {
+            font-size: 20px;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-easy {
+            background-color: rgba(166, 138, 100, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-medium {
+            background-color: rgba(212, 167, 106, 0.1);
+            color: var(--secondary);
+        }
+
+        .badge-hard {
+            background-color: rgba(211, 47, 47, 0.1);
+            color: var(--error);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--divider);
+            margin-bottom: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Settings */
+        .settings-list {
+            margin-top: 8px;
+        }
+
+        .settings-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .settings-item:active {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .settings-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .settings-value {
+            color: var(--text-secondary);
+        }
+
+        .settings-arrow {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        /* Balance */
+        .balance-container {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .balance-amount {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .balance-rate {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+
+        .history-list {
+            margin-top: 12px;
+        }
+
+        .history-item {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-title {
+            font-weight: 500;
+        }
+
+        .history-date {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .history-amount {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--surface);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            flex: 1;
+            position: relative;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-text {
+            font-size: 12px;
+            font-family: 'Montserrat', sans-serif;
+            transition: var(--transition);
+        }
+
+        .nav-active {
+            color: var(--primary);
+        }
+
+        .nav-active .nav-icon {
+            transform: translateY(-2px);
+        }
+
+        .nav-active .nav-text {
+            font-weight: 600;
+        }
+
+        .nav-active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary);
+            border-radius: 50%;
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-sm);
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--surface);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(166, 138, 100, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Photo upload */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .photo-preview {
+            width: 200px;
+            height: 200px;
+            border-radius: var(--radius-md);
+            background-color: var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .photo-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .photo-btn:active {
+            transform: scale(0.98);
+        }
+
+        .photo-btn.primary {
+            background-color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            min-height: 100px;
+            resize: none;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        /* Task details screen */
+        .task-details {
+            padding: 16px;
+        }
+
+        .task-image {
+            width: 100%;
+            height: 200px;
+            border-radius: var(--radius-md);
+            background-color: var(--divider);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .task-description {
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .task-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .task-reward {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Rating screen */
+        .rating-list {
+            margin-top: 16px;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .rating-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .rating-name {
+            font-weight: 500;
+        }
+
+        .rating-points {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .rating-position {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-sm);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-sm);
+            background-color: white;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        /* Activity items */
+        .activity-grid {
+            display: grid;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(166, 138, 100, 0.1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+        }
+
+        .activity-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .activity-points {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            border-radius: var(--radius-md);
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Pollution detection */
+        .pollution-level {
+            display: flex;
+            align-items: center;
+            margin: 16px 0;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            background-color: rgba(166, 138, 100, 0.1);
+        }
+
+        .pollution-icon {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .pollution-info {
+            flex: 1;
+        }
+
+        .pollution-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .pollution-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Tutorial */
+        .tutorial-step {
+            margin-bottom: 20px;
+            padding: 16px;
+            background-color: var(--surface);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tutorial-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tutorial-icon {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .tutorial-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Map styles */
+        .map-container {
+            height: 300px;
+            background-color: #E0E0E0;
+            border-radius: var(--radius-sm);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .map-marker {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+        
+        .marker-easy {
+            background-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.3);
+        }
+        
+        .marker-medium {
+            background-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(212, 167, 106, 0.3);
+        }
+        
+        .marker-hard {
+            background-color: var(--error);
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.3);
+        }
+        
+        .marker-user {
+            background-color: #4285F4;
+            width: 16px;
+            height: 16px;
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
+        }
+        
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Utility */
+        .mt-8 { margin-top: 8px; }
+        .mt-12 { margin-top: 12px; }
+        .mt-16 { margin-top: 16px; }
+        .mt-20 { margin-top: 20px; }
+        .mt-24 { margin-top: 24px; }
+        .mb-8 { margin-bottom: 8px; }
+        .mb-12 { margin-bottom: 12px; }
+        .mb-16 { margin-bottom: 16px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mb-24 { margin-bottom: 24px; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-muted { color: var(--text-secondary); }
+        .font-bold { font-weight: 600; }
+
+        /* Hide screens initially */
+        [id$="-screen"]:not(#register-screen) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Экран регистрации -->
+    <div id="register-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">👋</span> Добро пожаловать!</h3>
+            <p class="text-muted mb-16">Помогайте делать город чище и получайте вознаграждение за свою активность</p>
+            
+            <div class="form-group">
+                <label class="form-label">Фамилия Имя</label>
+                <input type="text" class="form-input" id="userFullName" placeholder="Иванов Иван">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Возраст</label>
+                <input type="number" class="form-input" id="userAge" placeholder="18">
+            </div>
+            
+            <button class="btn mt-16" onclick="completeRegistration()">
+                <span class="btn-icon">✅</span> Завершить регистрацию
+            </button>
+            
+            <div class="tutorial-step mt-24">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">ℹ️</span> Как это работает?
+                </div>
+                <div class="tutorial-content">
+                    Выполняйте задания по уборке, делайте фотоотчеты и получайте баллы, которые можно обменять на реальные деньги или бонусы.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Главный экран -->
+    <div id="main-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-label">Уровень 5</span>
+                    <span class="progress-value">65%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">1,606</div>
+                    <div class="stat-label">Баллов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">17</div>
+                    <div class="stat-label">Заданий</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Место</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">📊</span> Активности</h3>
+            
+            <div class="activity-widgets">
+                <div class="activity-widget" onclick="openTasks()">
+                    <div class="activity-widget-icon">🔍</div>
+                    <div class="activity-widget-title">Поиск заданий</div>
+                </div>
+                
+                <div class="activity-widget" onclick="openPhotoReport()">
+                    <div class="activity-widget-icon">📷</div>
+                    <div class="activity-widget-title">Фотодонос</div>
+                </div>
+                
+                <div class="activity-widget" onclick="openBalance()">
+                    <div class="activity-widget-icon">💰</div>
+                    <div class="activity-widget-title">Финансы</div>
+                </div>
+                
+                <div class="activity-widget" onclick="openRating()">
+                    <div class="activity-widget-icon">🏆</div>
+                    <div class="activity-widget-title">Рейтинг</div>
+                </div>
+                
+                <div class="activity-widget" onclick="openActiveTasks()">
+                    <div class="activity-widget-icon">⏳</div>
+                    <div class="activity-widget-title">Активные</div>
+                </div>
+                
+                <div class="activity-widget" onclick="openSettings()">
+                    <div class="activity-widget-icon">⚙️</div>
+                    <div class="activity-widget-title">Настройки</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">🌟</span> Рекомендуемые задания</h3>
+            <p class="text-muted mb-16">Выберите задание или создайте свое</p>
+            
+            <button class="btn" onclick="openTasks()">
+                <span class="btn-icon">🔍</span> Найти задания
+            </button>
+            <button class="btn btn-outline mt-12" onclick="openCreateTask()">
+                <span class="btn-icon">➕</span> Создать новое задание
+            </button>
+        </div>
+    </div>
+    
+    <!-- Экран настроек -->
+    <div id="settings-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">🔔</span> Уведомления</h3>
+            
+            <div class="settings-list">
+                <div class="settings-item" onclick="openNotificationSettings('reminders')">
+                    <div class="settings-label">
+                        <div class="settings-icon">📩</div>
+                        <div>Напоминания о заданиях</div>
+                    </div>
+                    <div class="settings-value">Включено <span class="settings-arrow">→</span></div>
+                </div>
+                
+                <div class="settings-item" onclick="openNotificationSettings('verification')">
+                    <div class="settings-label">
+                        <div class="settings-icon">✅</div>
+                        <div>Проверка заданий</div>
+                    </div>
+                    <div class="settings-value">Включено <span class="settings-arrow">→</span></div>
+                </div>
+                
+                <div class="settings-item" onclick="openNotificationSettings('points')">
+                    <div class="settings-label">
+                        <div class="settings-icon">🏆</div>
+                        <div>Получение баллов</div>
+                    </div>
+                    <div class="settings-value">Включено <span class="settings-arrow">→</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">🌐</span> Приложение</h3>
+            
+            <div class="settings-list">
+                <div class="settings-item" onclick="openLanguageSettings()">
+                    <div class="settings-label">
+                        <div class="settings-icon">🗣️</div>
+                        <div>Язык</div>
+                    </div>
+                    <div class="settings-value">Русский <span class="settings-arrow">→</span></div>
+                </div>
+                
+                <div class="settings-item" onclick="openHelp()">
+                    <div class="settings-label">
+                        <div class="settings-icon">❓</div>
+                        <div>Помощь</div>
+                    </div>
+                    <div class="settings-arrow">→</div>
+                </div>
+                
+                <div class="settings-item" onclick="openAbout()">
+                    <div class="settings-label">
+                        <div class="settings-icon">ℹ️</div>
+                        <div>О приложении</div>
+                    </div>
+                    <div class="settings-value">Версия 1.0.0 <span class="settings-arrow">→</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn btn-outline mt-16" style="color: var(--error); border-color: var(--error);" onclick="showLogoutConfirmation()">
+            <span class="btn-icon">🚪</span> Выйти из аккаунта
+        </button>
+    </div>
+    
+    <!-- Экран поиска заданий -->
+    <div id="tasks-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Поиск заданий..." id="taskSearch" oninput="searchTasks()">
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="filterTasks('all')">Все</div>
+            <div class="tab" onclick="filterTasks('trash')">Мусор</div>
+            <div class="tab" onclick="filterTasks('recycling')">Переработка</div>
+            <div class="tab" onclick="filterTasks('greening')">Озеленение</div>
+            <div class="tab" onclick="filterTasks('other')">Другое</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">📋</span> Результаты (5)</h3>
+            
+            <div class="task-list" id="tasksList">
+                <div class="task-item" data-category="trash" onclick="openTaskDetails(1)">
+                    <div class="task-content">
+                        <div class="task-title">Очистка парка Горького <span class="badge badge-easy">Легко</span></div>
+                        <div class="task-subtitle">Сбор мусора в центральной части парка</div>
+                    </div>
+                    <div class="task-points">150 баллов</div>
+                </div>
+                
+                <div class="task-item" data-category="recycling" onclick="openTaskDetails(2)">
+                    <div class="task-content">
+                        <div class="task-title">Сортировка вторсырья <span class="badge badge-medium">Средне</span></div>
+                        <div class="task-subtitle">Сортировка пластика, стекла и бумаги</div>
+                    </div>
+                    <div class="task-points">200 баллов</div>
+                </div>
+                
+                <div class="task-item" data-category="greening" onclick="openTaskDetails(3)">
+                    <div class="task-content">
+                        <div class="task-title">Посадка деревьев <span class="badge badge-hard">Сложно</span></div>
+                        <div class="task-subtitle">Посадка саженцев в сквере</div>
+                    </div>
+                    <div class="task-points">300 баллов</div>
+                </div>
+                
+                <div class="task-item" data-category="other" onclick="openTaskDetails(4)">
+                    <div class="task-content">
+                        <div class="task-title">Эко-лекция <span class="badge badge-medium">Средне</span></div>
+                        <div class="task-subtitle">Проведение лекции об экологии</div>
+                    </div>
+                    <div class="task-points">150 баллов</div>
+                </div>
+                
+                <div class="task-item" data-category="trash" onclick="openTaskDetails(5)">
+                    <div class="task-content">
+                        <div class="task-title">Уборка пляжа <span class="badge badge-medium">Средне</span></div>
+                        <div class="task-subtitle">Сбор мусора на городском пляже</div>
+                    </div>
+                    <div class="task-points">200 баллов</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран профиля -->
+    <div id="profile-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-label">1,606 баллов</span>
+                    <span class="progress-value">2,500 до 6 уровня</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">1,606</div>
+                    <div class="stat-label">Баллов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">17</div>
+                    <div class="stat-label">Заданий</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Фотодоносов</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">🏆</span> Рейтинг</h3>
+            <div class="text-center mt-12 mb-12" style="font-size: 24px; font-weight: 700;">
+                12 место
+            </div>
+            <button class="btn btn-outline" onclick="openRating()">
+                <span class="btn-icon">📊</span> Посмотреть топ
+            </button>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">⏱️</span> Активность</h3>
+            
+            <div class="activity-grid">
+                <div class="activity-item">
+                    <div class="activity-icon">🗑️</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Очистка парка</div>
+                        <div class="activity-date">15.06.2025</div>
+                    </div>
+                    <div class="activity-points">+150</div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">♻️</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Сортировка мусора</div>
+                        <div class="activity-date">10.06.2025</div>
+                    </div>
+                    <div class="activity-points">+200</div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">📷</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Фотодонос</div>
+                        <div class="activity-date">05.06.2025</div>
+                    </div>
+                    <div class="activity-points">+20</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран карты -->
+    <div id="map-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="filterMapTasks('all')">Все</div>
+            <div class="tab" onclick="filterMapTasks('trash')">Мусор</div>
+            <div class="tab" onclick="filterMapTasks('recycling')">Переработка</div>
+            <div class="tab" onclick="filterMapTasks('greening')">Озеленение</div>
+        </div>
+        
+        <div class="card fade-in">
+            <div class="map-container" id="map">
+                <div class="map-marker marker-user" style="top: 50%; left: 50%;">📍</div>
+            </div>
+            
+            <div class="map-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--success);"></div>
+                    <span>Легко</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--secondary);"></div>
+                    <span>Средне</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--error);"></div>
+                    <span>Сложно</span>
+                </div>
+            </div>
+            
+            <h3 class="card-title"><span class="icon">📌</span> Ближайшие задания</h3>
+            
+            <div class="task-list" id="mapTasksList">
+                <div class="task-item" data-category="trash" onclick="openTaskDetails(1)">
+                    <div class="task-content">
+                        <div class="task-title">Очистка парка Горького</div>
+                        <div class="task-subtitle">© Парк Горького</div>
+                    </div>
+                    <div class="task-points">150 баллов</div>
+                </div>
+                
+                <div class="task-item" data-category="recycling" onclick="openTaskDetails(2)">
+                    <div class="task-content">
+                        <div class="task-title">Сортировка вторсырья</div>
+                        <div class="task-subtitle">© Пункт приема</div>
+                    </div>
+                    <div class="task-points">200 баллов</div>
+                </div>
+                
+                <div class="task-item" data-category="greening" onclick="openTaskDetails(3)">
+                    <div class="task-content">
+                        <div class="task-title">Посадка деревьев</div>
+                        <div class="task-subtitle">© Сквер на Тверской</div>
+                    </div>
+                    <div class="task-points">300 баллов</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран баланса -->
+    <div id="balance-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <div class="balance-container">
+                <div class="balance-amount">1,606</div>
+                <div class="balance-rate">1 балл = 1 рубль</div>
+                <button class="btn btn-secondary" onclick="withdrawFunds()">
+                    <span class="btn-icon">💰</span> Вывести средства
+                </button>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">🕒</span> История операций</h3>
+            
+            <div class="history-list">
+                <div class="history-item" onclick="showTransactionDetails('Очистка парка Горького')">
+                    <div class="history-info">
+                        <div class="history-title">Очистка парка Горького</div>
+                        <div class="history-date">20.05.2025</div>
+                    </div>
+                    <div class="history-amount">+150</div>
+                </div>
+                
+                <div class="history-item" onclick="showTransactionDetails('Сортировка вторсырья')">
+                    <div class="history-info">
+                        <div class="history-title">Сортировка вторсырья</div>
+                        <div class="history-date">15.05.2025</div>
+                    </div>
+                    <div class="history-amount">+200</div>
+                </div>
+                
+                <div class="history-item" onclick="showTransactionDetails('Фотодоносы')">
+                    <div class="history-info">
+                        <div class="history-title">Фотодоносы (3)</div>
+                        <div class="history-date">05.05.2025</div>
+                    </div>
+                    <div class="history-amount">+60</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">❓</span> Как получить баллы?</h3>
+            
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-checkbox">1</div>
+                    <div class="task-content">
+                        <div class="task-title">Выполняйте эко-задания</div>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-checkbox">2</div>
+                    <div class="task-content">
+                        <div class="task-title">Делайте фотодоносы</div>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-checkbox">3</div>
+                    <div class="task-content">
+                        <div class="task-title">Получайте баллы после проверки</div>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-checkbox">4</div>
+                    <div class="task-content">
+                        <div class="task-title">Выводите на карту</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран фотодоноса -->
+    <div id="photo-report-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">📷</span> Фотодонос <span class="badge badge-easy">+20 баллов</span></h3>
+            <p class="text-muted mb-16">Сделайте фото загрязненного места. После 10 фотодоносов получите бонус 200 баллов!</p>
+            
+            <div class="photo-upload">
+                <div class="photo-preview" id="photoPreview" onclick="showPhotoOptions()">
+                    <span>Нажмите для загрузки фото</span>
+                </div>
+                
+                <div class="form-group mt-16">
+                    <label class="form-label">Описание проблемы</label>
+                    <textarea class="form-input" placeholder="Опишите проблему..." id="photoDescription"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Категория</label>
+                    <select class="form-select" id="photoCategory">
+                        <option value="trash">Мусор</option>
+                        <option value="recycling">Переработка</option>
+                        <option value="greening">Озеленение</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Адрес</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" class="form-input" placeholder="Укажите адрес" id="photoAddress" style="flex: 1;">
+                        <button class="btn btn-outline" style="width: auto; padding: 0 12px;" onclick="selectOnMap()">
+                            <span class="btn-icon">🗺️</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Баллы за выполнение</label>
+                    <input type="number" class="form-input" placeholder="100" id="photoPoints" value="100">
+                </div>
+                
+                <button class="btn mt-16" onclick="submitPhotoReport()">
+                    <span class="btn-icon">📤</span> Отправить на проверку
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран рейтинга -->
+    <div id="rating-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="changeRatingTab('all')">Общий</div>
+            <div class="tab" onclick="changeRatingTab('month')">За месяц</div>
+            <div class="tab" onclick="changeRatingTab('year')">За год</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">🏆</span> Топ пользователей</h3>
+            
+            <div class="rating-list" id="rating-all" style="display: block;">
+                <div class="rating-item">
+                    <div class="rating-avatar">И</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Иван Петров</div>
+                        <div class="rating-points">4,250 баллов</div>
+                    </div>
+                    <div class="rating-position">1</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">М</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Мария Сидорова</div>
+                        <div class="rating-points">3,980 баллов</div>
+                    </div>
+                    <div class="rating-position">2</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">С</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Сергей Иванов</div>
+                        <div class="rating-points">3,750 баллов</div>
+                    </div>
+                    <div class="rating-position">3</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">А</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Алексей В.</div>
+                        <div class="rating-points">1,606 баллов</div>
+                    </div>
+                    <div class="rating-position">12</div>
+                </div>
+            </div>
+            
+            <div class="rating-list" id="rating-month" style="display: none;">
+                <div class="rating-item">
+                    <div class="rating-avatar">М</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Мария Сидорова</div>
+                        <div class="rating-points">1,250 баллов</div>
+                    </div>
+                    <div class="rating-position">1</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">И</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Иван Петров</div>
+                        <div class="rating-points">1,200 баллов</div>
+                    </div>
+                    <div class="rating-position">2</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">А</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Алексей В.</div>
+                        <div class="rating-points">1,050 баллов</div>
+                    </div>
+                    <div class="rating-position">5</div>
+                </div>
+            </div>
+            
+            <div class="rating-list" id="rating-year" style="display: none;">
+                <div class="rating-item">
+                    <div class="rating-avatar">И</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Иван Петров</div>
+                        <div class="rating-points">3,850 баллов</div>
+                    </div>
+                    <div class="rating-position">1</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">С</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Сергей Иванов</div>
+                        <div class="rating-points">3,200 баллов</div>
+                    </div>
+                    <div class="rating-position">2</div>
+                </div>
+                
+                <div class="rating-item">
+                    <div class="rating-avatar">А</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Алексей В.</div>
+                        <div class="rating-points">1,300 баллов</div>
+                    </div>
+                    <div class="rating-position">10</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран активных заданий -->
+    <div id="active-tasks-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">⏳</span> Активные задания (2)</h3>
+            
+            <div class="task-list">
+                <div class="task-item" onclick="openTaskDetails(1)">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Очистка парка Горького</div>
+                        <div class="task-subtitle">Срок: до 15.06.2025</div>
+                    </div>
+                </div>
+                
+                <div class="task-item" onclick="openTaskDetails(2)">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Сортировка вторсырья</div>
+                        <div class="task-subtitle">Срок: до 10.06.2025</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-outline mt-16" onclick="openTasks()">
+                <span class="btn-icon">🔍</span> Найти новые задания
+            </button>
+        </div>
+    </div>
+    
+    <!-- Экран деталей задания -->
+    <div id="task-details-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <div class="task-image" id="taskImage">
+                Фото задания
+            </div>
+            
+            <h3 id="taskTitle">Очистка парка Горького</h3>
+            
+            <div class="task-description" id="taskDescription">
+                Сбор мусора в центральной части парка. Необходимо убрать территорию вокруг главного фонтана и аллеи.
+            </div>
+            
+            <div class="task-meta">
+                <div class="task-location">
+                    <span class="icon">📍</span>
+                    <span id="taskLocation">Парк Горького, Москва</span>
+                </div>
+                <div class="task-reward" id="taskReward">150 баллов</div>
+            </div>
+            
+            <div class="mt-16">
+                <span class="badge badge-easy">Легко</span>
+                <span class="text-muted">Срок: до <span id="taskDeadline">15.06.2025</span></span>
+            </div>
+            
+            <button class="btn mt-24" id="taskActionBtn" onclick="acceptTask()">
+                <span class="btn-icon">✅</span> Принять задание
+            </button>
+            
+            <button class="btn btn-outline mt-12" onclick="showOnMap()">
+                <span class="btn-icon">🗺️</span> Показать на карте
+            </button>
+        </div>
+    </div>
+    
+    <!-- Экран выполнения задания (фотоотчет) -->
+    <div id="task-complete-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">✅</span> Фотоотчет</h3>
+            <p class="text-muted mb-16">Сделайте фото выполненного задания и получите баллы</p>
+            
+            <div class="photo-upload">
+                <div class="photo-preview" id="taskCompletePhotoPreview" onclick="showPhotoOptions('complete')">
+                    <span>Нажмите для загрузки фото</span>
+                </div>
+                
+                <div id="taskCompletePollutionDetection" style="display: none;">
+                    <div class="pollution-level">
+                        <div class="pollution-icon">✅</div>
+                        <div class="pollution-info">
+                            <div class="pollution-title">Задание выполнено</div>
+                            <div class="pollution-description">Нейросеть подтвердила, что территория очищена</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <textarea placeholder="Опишите выполненную работу..." id="taskCompleteDescription"></textarea>
+                
+                <button class="btn" onclick="submitTaskCompletion()">
+                    <span class="btn-icon">📤</span> Отправить на проверку
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Экран создания задания -->
+    <div id="create-task-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">➕</span> Создать новое задание</h3>
+            <p class="text-muted mb-16">Опишите проблему и назначьте вознаграждение</p>
+            
+            <div class="form-group">
+                <label class="form-label">Фото места</label>
+                <div class="photo-preview" onclick="showPhotoOptions('task')" style="height: 120px;">
+                    <span>Нажмите для добавления фото</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Описание проблемы</label>
+                <textarea class="form-input" placeholder="Опишите проблему..." id="taskProblemDescription"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Категория</label>
+                <select class="form-select" id="taskCategory">
+                    <option value="trash">Мусор</option>
+                    <option value="recycling">Переработка</option>
+                    <option value="greening">Озеленение</option>
+                    <option value="other">Другое</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Адрес</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" class="form-input" placeholder="Укажите адрес" id="taskAddress" style="flex: 1;">
+                    <button class="btn btn-outline" style="width: auto; padding: 0 12px;" onclick="selectOnMap()">
+                        <span class="btn-icon">🗺️</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Баллы за выполнение</label>
+                <input type="number" class="form-input" placeholder="100" id="taskPoints">
+            </div>
+            
+            <button class="btn mt-16" onclick="publishTask()">
+                <span class="btn-icon">📢</span> Опубликовать задание
+            </button>
+        </div>
+    </div>
+    
+    <!-- Экран помощи -->
+    <div id="help-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">❓</span> Помощь</h3>
+            
+            <div class="tutorial-step">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">🔍</span> Как найти задание?
+                </div>
+                <div class="tutorial-content">
+                    Перейдите на вкладку "Карта" или "Задания", выберите подходящее задание и нажмите "Принять".
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">📷</span> Как сделать фотодонос?
+                </div>
+                <div class="tutorial-content">
+                    Перейдите в раздел "Фотодонос", загрузите фото загрязненного места и опишите проблему.
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">💰</span> Как получить деньги?
+                </div>
+                <div class="tutorial-content">
+                    Накопите баллы и выведите их на карту в разделе "Финансы". 1 балл = 1 рубль.
+                </div>
+            </div>
+            
+            <button class="btn btn-outline mt-16" onclick="showScreen('main-screen')">
+                <span class="btn-icon">🏠</span> На главную
+            </button>
+        </div>
+    </div>
+    
+    <!-- Экран о приложении -->
+    <div id="about-screen">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">ЧистON</div>
+            </div>
+            <div class="user-avatar" onclick="openProfile()">А</div>
+        </div>
+        
+        <div class="card fade-in">
+            <h3 class="card-title"><span class="icon">ℹ️</span> О приложении</h3>
+            
+            <div class="tutorial-step">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">♻️</span> ЧистON
+                </div>
+                <div class="tutorial-content">
+                    Приложение для экологических активистов, которые хотят сделать мир чище и получить вознаграждение за свою деятельность.
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">🤖</span> Нейросеть
+                </div>
+                <div class="tutorial-content">
+                    Мы используем обученную нейросеть для анализа фотоотчетов и автоматического определения уровня загрязнения.
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <div class="tutorial-title">
+                    <span class="tutorial-icon">📱</span> Контакты
+                </div>
+                <div class="tutorial-content">
+                    По всем вопросам: support@chiston.app<br>
+                    Телефон: +7 (123) 456-78-90
+                </div>
+            </div>
+            
+            <div class="text-muted mt-16" style="font-size: 12px;">
+                Версия 1.0.0<br>
+                © 2025 ЧистON
+            </div>
+            
+            <button class="btn btn-outline mt-16" onclick="showScreen('main-screen')">
+                <span class="btn-icon">🏠</span> На главную
+            </button>
+        </div>
+    </div>
+    
+    <!-- Модальное окно выбора фото -->
+    <div class="modal" id="photoModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Выберите источник фото</h3>
+            <p>Откуда вы хотите загрузить фото?</p>
+            
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="takePhoto()">
+                    <span class="btn-icon">📸</span> Камера
+                </button>
+                <button class="btn" onclick="choosePhoto()">
+                    <span class="btn-icon">🖼️</span> Галерея
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно выбора действия с фотодоносом -->
+    <div class="modal" id="photoReportActionModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Выберите действие</h3>
+            <p>Что вы хотите сделать с этим фотодоносом?</p>
+            
+            <div class="modal-actions">
+                <button class="btn" onclick="completeTaskYourself()">
+                    <span class="btn-icon">✅</span> Выполнить самому
+                </button>
+                <button class="btn btn-outline" onclick="publishTaskForOthers()">
+                    <span class="btn-icon">📢</span> Опубликовать для других
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно настроек уведомлений -->
+    <div class="modal" id="notificationSettingsModal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="notificationSettingsTitle">Настройки уведомлений</h3>
+            
+            <div class="settings-list">
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-icon">🔔</div>
+                        <div>Включить уведомления</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-icon">⏰</div>
+                        <div>Время напоминаний</div>
+                    </div>
+                    <select class="form-select">
+                        <option>09:00</option>
+                        <option>12:00</option>
+                        <option>18:00</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('notificationSettingsModal')">
+                    Отмена
+                </button>
+                <button class="btn" onclick="saveNotificationSettings()">
+                    Сохранить
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно выбора языка -->
+    <div class="modal" id="languageModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Выберите язык</h3>
+            
+            <div class="settings-list">
+                <div class="settings-item" onclick="selectLanguage('ru')">
+                    <div class="settings-label">
+                        <div class="settings-icon">🇷🇺</div>
+                        <div>Русский</div>
+                    </div>
+                    <div class="settings-arrow">→</div>
+                </div>
+                
+                <div class="settings-item" onclick="selectLanguage('en')">
+                    <div class="settings-label">
+                        <div class="settings-icon">🇬🇧</div>
+                        <div>English</div>
+                    </div>
+                    <div class="settings-arrow">→</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно подтверждения выхода -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Подтверждение выхода</h3>
+            <p>Вы уверены, что хотите выйти из аккаунта?</p>
+            
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('logoutModal')">
+                    Отмена
+                </button>
+                <button class="btn" style="background-color: var(--error);" onclick="logout()">
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно успешного выполнения -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <h3 class="modal-title" style="color: var(--success);">✅ Успешно!</h3>
+            <p id="successMessage">Задание успешно выполнено</p>
+            
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="closeModal('successModal')">
+                    Понятно
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Нижнее меню -->
+    <div class="bottom-nav">
+        <div class="nav-item nav-active" onclick="showScreen('main-screen')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-text">Главная</div>
+        </div>
+        <div class="nav-item" onclick="showScreen('map-screen')">
+            <div class="nav-icon">🗺️</div>
+            <div class="nav-text">Карта</div>
+        </div>
+        <div class="nav-item" onclick="showScreen('profile-screen')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-text">Профиль</div>
+        </div>
+    </div>
+    
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        
+        // Текущий пользователь
+        const user = {
+            name: "Алексей В.",
+            level: 5,
+            points: 1606,
+            tasksCompleted: 17,
+            photoReports: 3,
+            rank: 12,
+            nextLevel: 2500,
+            registered: false,
+            notifications: {
+                reminders: true,
+                verification: true,
+                points: true
+            }
+        };
+        
+        // Все задания в системе
+        const tasks = [
+            {
+                id: 1,
+                title: "Очистка парка Горького",
+                description: "Сбор мусора в центральной части парка. Необходимо убрать территорию вокруг главного фонтана и аллеи.",
+                location: "Парк Горького, Москва",
+                reward: 150,
+                deadline: "15.06.2025",
+                category: "trash",
+                difficulty: "easy",
+                creator: "admin",
+                status: "active",
+                photo: "https://via.placeholder.com/400x200?text=Парк+Горького",
+                position: { x: 40, y: 50 }
+            },
+            {
+                id: 2,
+                title: "Сортировка вторсырья",
+                description: "Сортировка пластика, стекла и бумаги в пункте приема вторсырья.",
+                location: "Пункт приема, ул. Экологическая, 15",
+                reward: 200,
+                deadline: "10.06.2025",
+                category: "recycling",
+                difficulty: "medium",
+                creator: "admin",
+                status: "active",
+                photo: "https://via.placeholder.com/400x200?text=Пункт+приема",
+                position: { x: 50, y: 40 }
+            },
+            {
+                id: 3,
+                title: "Посадка деревьев",
+                description: "Посадка 10 саженцев липы в сквере на Тверской улице.",
+                location: "Сквер на Тверской, Москва",
+                reward: 300,
+                deadline: "20.06.2025",
+                category: "greening",
+                difficulty: "hard",
+                creator: "admin",
+                status: "active",
+                photo: "https://via.placeholder.com/400x200?text=Сквер+на+Тверской",
+                position: { x: 60, y: 60 }
+            },
+            {
+                id: 4,
+                title: "Эко-лекция",
+                description: "Проведение лекции об экологии для школьников.",
+                location: "Школа №123, ул. Зеленая, 10",
+                reward: 150,
+                deadline: "25.06.2025",
+                category: "other",
+                difficulty: "medium",
+                creator: "admin",
+                status: "active",
+                photo: "https://via.placeholder.com/400x200?text=Эко-лекция",
+                position: { x: 35, y: 45 }
+            },
+            {
+                id: 5,
+                title: "Уборка пляжа",
+                description: "Сбор мусора на городском пляже.",
+                location: "Городской пляж, набережная",
+                reward: 200,
+                deadline: "30.06.2025",
+                category: "trash",
+                difficulty: "medium",
+                creator: "admin",
+                status: "active",
+                photo: "https://via.placeholder.com/400x200?text=Городской+пляж",
+                position: { x: 55, y: 70 }
+            }
+        ];
+        
+        // Активные задания пользователя
+        const userTasks = [
+            {
+                id: 1,
+                title: "Очистка парка Горького",
+                deadline: "15.06.2025",
+                status: "in_progress"
+            },
+            {
+                id: 2,
+                title: "Сортировка вторсырья",
+                deadline: "10.06.2025",
+                status: "in_progress"
+            }
+        ];
+        
+        // Счетчик фотодоносов
+        let photoReportsCount = 3;
+        
+        // Проверяем, зарегистрирован ли пользователь
+        if (localStorage.getItem('userRegistered')) {
+            user.registered = true;
+            document.getElementById('register-screen').style.display = 'none';
+            document.getElementById('main-screen').style.display = 'block';
+        }
+        
+        // Инициализация данных
+        function initData() {
+            // Обновляем прогресс
+            const progress = Math.floor((user.points / user.nextLevel) * 100);
+            document.querySelectorAll('.progress-fill').forEach(el => {
+                el.style.width = `${progress}%`;
+            });
+            
+            // Обновляем статистику
+            document.querySelectorAll('.stat-value:nth-child(1)').forEach(el => {
+                el.textContent = user.points.toLocaleString();
+            });
+            
+            document.querySelectorAll('.stat-value:nth-child(2)').forEach(el => {
+                el.textContent = user.tasksCompleted;
+            });
+            
+            document.querySelectorAll('.stat-value:nth-child(3)').forEach(el => {
+                el.textContent = photoReportsCount;
+            });
+            
+            // Обновляем баланс
+            document.querySelectorAll('.balance-amount').forEach(el => {
+                el.textContent = user.points.toLocaleString();
+            });
+            
+            // Обновляем список заданий
+            updateTasksList();
+            updateMapMarkers();
+            updateMapTasksList('all');
+        }
+        
+        // Обновление списка заданий
+        function updateTasksList() {
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = '';
+            
+            tasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.setAttribute('data-category', task.category);
+                taskItem.setAttribute('onclick', `openTaskDetails(${task.id})`);
+                
+                let badgeClass = 'badge-easy';
+                if (task.difficulty === 'medium') badgeClass = 'badge-medium';
+                else if (task.difficulty === 'hard') badgeClass = 'badge-hard';
+                
+                taskItem.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-title">${task.title} <span class="badge ${badgeClass}">${getDifficultyText(task.difficulty)}</span></div>
+                        <div class="task-subtitle">${task.description.substring(0, 50)}...</div>
+                    </div>
+                    <div class="task-points">${task.reward} баллов</div>
+                `;
+                
+                tasksList.appendChild(taskItem);
+            });
+        }
+        
+        // Получение текста сложности
+        function getDifficultyText(difficulty) {
+            switch(difficulty) {
+                case 'easy': return 'Легко';
+                case 'medium': return 'Средне';
+                case 'hard': return 'Сложно';
+                default: return '';
+            }
+        }
+        
+        // Получение иконки маркера по категории
+        function getMarkerIcon(category) {
+            switch(category) {
+                case 'trash': return '🗑️';
+                case 'recycling': return '♻️';
+                case 'greening': return '🌱';
+                default: return '📍';
+            }
+        }
+        
+        // Завершение регистрации
+        function completeRegistration() {
+            const fullName = document.getElementById('userFullName').value;
+            const age = document.getElementById('userAge').value;
+            
+            if (!fullName || !age) {
+                tg.showAlert('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            user.name = fullName;
+            user.registered = true;
+            localStorage.setItem('userRegistered', 'true');
+            
+            // Обновляем аватар с инициалами
+            const initials = fullName.split(' ').map(n => n[0]).join('');
+            document.querySelectorAll('.user-avatar').forEach(el => {
+                el.textContent = initials;
+            });
+            
+            showScreen('main-screen');
+            showSuccess('Регистрация завершена! Добро пожаловать в ЧистON!');
+        }
+        
+        // Показать экран
+        function showScreen(screenId) {
+            if (!user.registered && screenId !== 'register-screen') {
+                return;
+            }
+            
+            document.querySelectorAll('[id$="-screen"]').forEach(screen => {
+                screen.style.display = 'none';
+            });
+            
+            const screen = document.getElementById(screenId);
+            screen.style.display = 'block';
+            
+            // Добавляем анимацию
+            screen.classList.add('fade-in');
+            setTimeout(() => {
+                screen.classList.remove('fade-in');
+            }, 400);
+            
+            // Обновить активную вкладку в нижнем меню
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('nav-active');
+            });
+            
+            if (screenId === 'main-screen') {
+                document.querySelector('.nav-item:nth-child(1)').classList.add('nav-active');
+            } else if (screenId === 'map-screen') {
+                document.querySelector('.nav-item:nth-child(2)').classList.add('nav-active');
+            } else if (screenId === 'profile-screen') {
+                document.querySelector('.nav-item:nth-child(3)').classList.add('nav-active');
+            }
+            
+            // Прокрутка вверх
+            window.scrollTo(0, 0);
+            
+            // Инициализация карты при открытии экрана
+            if (screenId === 'map-screen') {
+                updateMapMarkers();
+                updateMapTasksList('all');
+            }
+        }
+        
+        // Функции для обработки нажатий
+        function openSettings() {
+            showScreen('settings-screen');
+        }
+        
+        function openTasks() {
+            showScreen('tasks-screen');
+        }
+        
+        function openBalance() {
+            showScreen('balance-screen');
+        }
+        
+        function openRating() {
+            showScreen('rating-screen');
+        }
+        
+        function openProfile() {
+            showScreen('profile-screen');
+        }
+        
+        function openPhotoReport() {
+            showScreen('photo-report-screen');
+        }
+        
+        function openActiveTasks() {
+            showScreen('active-tasks-screen');
+        }
+        
+        function openCreateTask() {
+            showScreen('create-task-screen');
+        }
+        
+        function openHelp() {
+            showScreen('help-screen');
+        }
+        
+        function openAbout() {
+            showScreen('about-screen');
+        }
+        
+        function openTaskDetails(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            // Устанавливаем данные задачи
+            document.getElementById('taskTitle').textContent = task.title;
+            document.getElementById('taskDescription').textContent = task.description;
+            document.getElementById('taskLocation').textContent = task.location;
+            document.getElementById('taskReward').textContent = `${task.reward} баллов`;
+            document.getElementById('taskDeadline').textContent = task.deadline;
+            
+            // Устанавливаем фото задачи
+            const taskImage = document.getElementById('taskImage');
+            taskImage.innerHTML = `<img src="${task.photo}" alt="${task.title}" style="width:100%;height:100%;object-fit:cover;">`;
+            
+            // Проверяем, является ли задание активным для пользователя
+            const isActiveTask = userTasks.some(t => t.id === task.id && t.status === 'in_progress');
+            
+            if (isActiveTask) {
+                document.getElementById('taskActionBtn').innerHTML = '<span class="btn-icon">📷</span> Сделать фотоотчет';
+                document.getElementById('taskActionBtn').onclick = function() { openTaskCompletion(taskId); };
+            } else {
+                document.getElementById('taskActionBtn').innerHTML = '<span class="btn-icon">✅</span> Принять задание';
+                document.getElementById('taskActionBtn').onclick = function() { acceptTask(taskId); };
+            }
+            
+            // Устанавливаем сложность
+            const difficultyBadge = document.createElement('span');
+            difficultyBadge.className = `badge badge-${task.difficulty}`;
+            difficultyBadge.textContent = getDifficultyText(task.difficulty);
+            
+            const badgeContainer = document.querySelector('#task-details-screen .mt-16');
+            badgeContainer.innerHTML = '';
+            badgeContainer.appendChild(difficultyBadge);
+            
+            const deadlineText = document.createElement('span');
+            deadlineText.className = 'text-muted';
+            deadlineText.textContent = ` Срок: до ${task.deadline}`;
+            badgeContainer.appendChild(deadlineText);
+            
+            showScreen('task-details-screen');
+        }
+        
+        // Открытие экрана выполнения задания
+        function openTaskCompletion(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            // Устанавливаем данные задачи
+            document.getElementById('taskCompletePhotoPreview').innerHTML = `<img src="${task.photo}" alt="${task.title}" style="width:100%;height:100%;object-fit:cover;">`;
+            document.getElementById('taskCompleteDescription').value = '';
+            
+            showScreen('task-complete-screen');
+        }
+        
+        // Фильтрация заданий
+        function filterTasks(filter) {
+            const tasks = document.querySelectorAll('.task-item[data-category]');
+            
+            tasks.forEach(task => {
+                if (filter === 'all' || task.dataset.category === filter) {
+                    task.style.display = 'flex';
+                } else {
+                    task.style.display = 'none';
+                }
+            });
+            
+            // Обновляем активную вкладку
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Поиск заданий
+        function searchTasks() {
+            const searchTerm = document.getElementById('taskSearch').value.toLowerCase();
+            const taskItems = document.querySelectorAll('.task-item');
+            
+            taskItems.forEach(item => {
+                const title = item.querySelector('.task-title').textContent.toLowerCase();
+                const subtitle = item.querySelector('.task-subtitle').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || subtitle.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Функция для обновления маркеров на карте
+        function updateMapMarkers() {
+            const map = document.getElementById('map');
+            const currentFilter = document.querySelector('.tab.active').textContent.toLowerCase();
+            
+            // Очищаем старые маркеры (кроме маркера пользователя)
+            document.querySelectorAll('.map-marker:not(.marker-user)').forEach(marker => {
+                marker.remove();
+            });
+            
+            // Добавляем маркеры для заданий
+            tasks.forEach(task => {
+                if (currentFilter === 'все' || task.category === currentFilter) {
+                    const marker = document.createElement('div');
+                    marker.className = `map-marker marker-${task.difficulty}`;
+                    marker.style.top = `${task.position.y}%`;
+                    marker.style.left = `${task.position.x}%`;
+                    marker.innerHTML = getMarkerIcon(task.category);
+                    marker.onclick = () => openTaskDetails(task.id);
+                    
+                    map.appendChild(marker);
+                }
+            });
+        }
+        
+        // Функция для обновления списка заданий на карте
+        function updateMapTasksList(filter = 'all') {
+            const tasksList = document.getElementById('mapTasksList');
+            tasksList.innerHTML = '';
+            
+            const filteredTasks = tasks.filter(task => {
+                return filter === 'all' || task.category === filter;
+            });
+            
+            filteredTasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.setAttribute('onclick', `openTaskDetails(${task.id})`);
+                
+                let badgeClass = 'badge-easy';
+                if (task.difficulty === 'medium') badgeClass = 'badge-medium';
+                else if (task.difficulty === 'hard') badgeClass = 'badge-hard';
+                
+                taskItem.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-title">${task.title} <span class="badge ${badgeClass}">${getDifficultyText(task.difficulty)}</span></div>
+                        <div class="task-subtitle">${task.location}</div>
+                    </div>
+                    <div class="task-points">${task.reward} баллов</div>
+                `;
+                
+                tasksList.appendChild(taskItem);
+            });
+        }
+        
+        function filterMapTasks(filter) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateMapMarkers();
+            updateMapTasksList(filter);
+        }
+        
+        function changeRatingTab(tab) {
+            // Обновляем активную вкладку
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Показываем соответствующий рейтинг
+            document.querySelectorAll('.rating-list').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            document.getElementById(`rating-${tab}`).style.display = 'block';
+        }
+        
+        // Принятие задания
+        function acceptTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            // Добавляем задание в активные
+            userTasks.push({
+                id: task.id,
+                title: task.title,
+                deadline: task.deadline,
+                status: 'in_progress'
+            });
+            
+            showSuccess('Задание принято! Теперь оно отображается в ваших активных заданиях.');
+            
+            setTimeout(() => {
+                showScreen('active-tasks-screen');
+            }, 1500);
+        }
+        
+        // Отправка фотодоноса
+        function submitPhotoReport() {
+            const photo = document.getElementById('photoPreview').querySelector('img');
+            const description = document.getElementById('photoDescription').value;
+            const category = document.getElementById('photoCategory').value;
+            const address = document.getElementById('photoAddress').value;
+            const points = document.getElementById('photoPoints').value;
+            
+            if (!photo || !description || !address || !points) {
+                tg.showAlert('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            // Имитация проверки нейросетью
+            setTimeout(() => {
+                // Увеличиваем счетчик фотодоносов
+                photoReportsCount++;
+                user.photoReports = photoReportsCount;
+                
+                // Добавляем баллы за фотодонос
+                user.points += 20;
+                
+                // Проверяем бонус за 10 фотодоносов
+                if (photoReportsCount % 10 === 0) {
+                    user.points += 200;
+                    showSuccess(`Фотодонос принят! Вы получили 20 баллов. Бонус: +200 баллов за 10 фотодоносов!`);
+                } else {
+                    showSuccess('Фотодонос принят! Вы получили 20 баллов.');
+                }
+                
+                // Создаем новое задание на основе фотодоноса
+                const newTask = {
+                    id: tasks.length + 1,
+                    title: description.substring(0, 30) + (description.length > 30 ? '...' : ''),
+                    description: description,
+                    location: address,
+                    reward: parseInt(points),
+                    deadline: getFutureDate(7), // +7 дней от текущей даты
+                    category: category,
+                    difficulty: getRandomDifficulty(),
+                    creator: "user",
+                    status: "active",
+                    photo: photo.src,
+                    position: getRandomPosition()
+                };
+                
+                tasks.push(newTask);
+                updateTasksList();
+                updateMapMarkers();
+                
+                // Обновляем статистику
+                initData();
+                
+                setTimeout(() => {
+                    showScreen('map-screen');
+                }, 1500);
+            }, 2000);
+        }
+        
+        // Выполнение задания самостоятельно
+        function completeTaskYourself() {
+            closeModal('photoReportActionModal');
+            
+            // Имитация анализа нейросетью
+            setTimeout(() => {
+                // Добавляем баллы за фотодонос
+                photoReportsCount++;
+                user.points += 20; // 20 баллов за фотодонос
+                
+                // Обновляем статистику
+                initData();
+                
+                // Показываем успешное сообщение
+                showSuccess('Фотодонос принят! Вы получили 20 баллов. Теперь вы можете выполнить это задание.');
+                
+                // Переходим к выполнению задания
+                setTimeout(() => {
+                    // Создаем новое задание на основе фотодоноса
+                    const newTask = {
+                        id: tasks.length + 1,
+                        title: "Новое задание",
+                        description: document.getElementById('photoDescription').value,
+                        location: "Уточните адрес",
+                        reward: 100,
+                        deadline: "30.06.2025",
+                        category: "trash",
+                        difficulty: "medium",
+                        creator: "user",
+                        status: "active",
+                        photo: "https://via.placeholder.com/400x200?text=Новое+задание"
+                    };
+                    
+                    tasks.push(newTask);
+                    
+                    // Принимаем задание
+                    acceptTask(newTask.id);
+                }, 1500);
+            }, 2000);
+        }
+        
+        // Публикация задания для других
+        function publishTaskForOthers() {
+            closeModal('photoReportActionModal');
+            
+            // Имитация анализа нейросетью
+            setTimeout(() => {
+                // Добавляем баллы за фотодонос
+                photoReportsCount++;
+                user.points += 20; // 20 баллов за фотодонос
+                
+                // Обновляем статистику
+                initData();
+                
+                // Создаем новое задание
+                const newTask = {
+                    id: tasks.length + 1,
+                    title: "Новое задание",
+                    description: document.getElementById('photoDescription').value,
+                    location: "Уточните адрес",
+                    reward: 100,
+                    deadline: "30.06.2025",
+                    category: "trash",
+                    difficulty: "medium",
+                    creator: "user",
+                    status: "active",
+                    photo: "https://via.placeholder.com/400x200?text=Новое+задание"
+                };
+                
+                tasks.push(newTask);
+                updateTasksList();
+                
+                // Показываем успешное сообщение
+                showSuccess('Задание опубликовано! Вы получили 20 баллов. Другие пользователи смогут его выполнить.');
+                
+                setTimeout(() => {
+                    showScreen('tasks-screen');
+                }, 1500);
+            }, 2000);
+        }
+        
+        // Отправка выполнения задания
+        function submitTaskCompletion() {
+            const description = document.getElementById('taskCompleteDescription').value;
+            if (!description) {
+                tg.showAlert('Пожалуйста, опишите выполненную работу');
+                return;
+            }
+            
+            // Имитация анализа нейросетью
+            setTimeout(() => {
+                document.getElementById('taskCompletePollutionDetection').style.display = 'block';
+                
+                // Добавляем баллы за выполнение задания
+                const task = tasks.find(t => t.id === userTasks[userTasks.length - 1].id);
+                if (task) {
+                    user.points += task.reward;
+                    user.tasksCompleted++;
+                    
+                    // Проверяем бонус за 10 фотодоносов
+                    if (photoReportsCount >= 10) {
+                        user.points += 200;
+                        photoReportsCount = 0; // Сбрасываем счетчик
+                        showSuccess(`Задание выполнено! Вы получили ${task.reward} баллов. Бонус: +200 баллов за 10 фотодоносов!`);
+                    } else {
+                        showSuccess(`Задание выполнено! Вы получили ${task.reward} баллов.`);
+                    }
+                    
+                    // Обновляем статистику
+                    initData();
+                    
+                    setTimeout(() => {
+                        showScreen('main-screen');
+                    }, 1500);
+                }
+            }, 2000);
+        }
+        
+        function publishTask() {
+            const problemDescription = document.getElementById('taskProblemDescription').value;
+            const address = document.getElementById('taskAddress').value;
+            const points = document.getElementById('taskPoints').value;
+            
+            if (!problemDescription || !address || !points) {
+                tg.showAlert('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            // Создаем новое задание
+            const newTask = {
+                id: tasks.length + 1,
+                title: problemDescription.substring(0, 30) + (problemDescription.length > 30 ? '...' : ''),
+                description: problemDescription,
+                location: address,
+                reward: parseInt(points),
+                deadline: getFutureDate(7), // +7 дней от текущей даты
+                category: document.getElementById('taskCategory').value,
+                difficulty: getRandomDifficulty(),
+                creator: "user",
+                status: "active",
+                photo: "https://via.placeholder.com/400x200?text=Новое+задание",
+                position: getRandomPosition()
+            };
+            
+            tasks.push(newTask);
+            updateTasksList();
+            updateMapMarkers();
+            
+            showSuccess('Задание опубликовано! Теперь другие пользователи смогут его выполнить.');
+            setTimeout(() => {
+                showScreen('tasks-screen');
+            }, 1500);
+        }
+        
+        function withdrawFunds() {
+            tg.showAlert('Функция вывода средств');
+            // Здесь можно добавить логику вывода средств
+        }
+        
+        function showTransactionDetails(transaction) {
+            tg.showAlert(`Детали операции: ${transaction}`);
+        }
+        
+        // Функции для работы с фото
+        let currentPhotoContext = null;
+        
+        function showPhotoOptions(context = 'report') {
+            currentPhotoContext = context;
+            document.getElementById('photoModal').style.display = 'flex';
+        }
+        
+        function takePhoto() {
+            closeModal('photoModal');
+            tg.showAlert('Открытие камеры для фото');
+            // В реальном приложении здесь будет вызов API камеры
+            const photoUrl = 'https://via.placeholder.com/200';
+            
+            if (currentPhotoContext === 'report') {
+                document.getElementById('photoPreview').innerHTML = `<img src="${photoUrl}" alt="Фото">`;
+            } else if (currentPhotoContext === 'complete') {
+                document.getElementById('taskCompletePhotoPreview').innerHTML = `<img src="${photoUrl}" alt="Фото">`;
+            } else {
+                document.querySelector('#create-task-screen .photo-preview').innerHTML = `<img src="${photoUrl}" alt="Фото задания">`;
+            }
+        }
+        
+        function choosePhoto() {
+            closeModal('photoModal');
+            tg.showAlert('Выбор фото из галереи');
+            // В реальном приложении здесь будет вызов API галереи
+            const photoUrl = 'https://via.placeholder.com/200';
+            
+            if (currentPhotoContext === 'report') {
+                document.getElementById('photoPreview').innerHTML = `<img src="${photoUrl}" alt="Фото">`;
+            } else if (currentPhotoContext === 'complete') {
+                document.getElementById('taskCompletePhotoPreview').innerHTML = `<img src="${photoUrl}" alt="Фото">`;
+            } else {
+                document.querySelector('#create-task-screen .photo-preview').innerHTML = `<img src="${photoUrl}" alt="Фото задания">`;
+            }
+        }
+        
+        function showOnMap() {
+            tg.showAlert('Показать задание на карте');
+            showScreen('map-screen');
+        }
+        
+        function selectOnMap() {
+            tg.showAlert('Выбор места на карте');
+            // Здесь будет логика выбора места на карте
+            document.getElementById('taskAddress').value = 'Парк Горького, Москва';
+            document.getElementById('photoAddress').value = 'Парк Горького, Москва';
+        }
+        
+        // Настройки уведомлений
+        function openNotificationSettings(type) {
+            let title = '';
+            if (type === 'reminders') title = 'Напоминания о заданиях';
+            else if (type === 'verification') title = 'Проверка заданий';
+            else if (type === 'points') title = 'Получение баллов';
+            
+            document.getElementById('notificationSettingsTitle').textContent = title;
+            document.getElementById('notificationSettingsModal').style.display = 'flex';
+        }
+        
+        function saveNotificationSettings() {
+            closeModal('notificationSettingsModal');
+            showSuccess('Настройки уведомлений сохранены');
+        }
+        
+        // Настройки языка
+        function openLanguageSettings() {
+            document.getElementById('languageModal').style.display = 'flex';
+        }
+        
+        function selectLanguage(lang) {
+            closeModal('languageModal');
+            showSuccess(`Язык изменен на ${lang === 'ru' ? 'Русский' : 'English'}`);
+        }
+        
+        // Подтверждение выхода
+        function showLogoutConfirmation() {
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+        
+        function logout() {
+            localStorage.removeItem('userRegistered');
+            tg.showAlert("Вы вышли из аккаунта");
+            tg.close();
+        }
+        
+        // Показать успешное выполнение
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').style.display = 'flex';
+        }
+        
+        // Закрытие модальных окон
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Вспомогательные функции
+        function getRandomPosition() {
+            return {
+                x: 30 + Math.random() * 40,
+                y: 20 + Math.random() * 60
+            };
+        }
+        
+        function getRandomDifficulty() {
+            const rand = Math.random();
+            return rand < 0.6 ? 'easy' : rand < 0.9 ? 'medium' : 'hard';
+        }
+        
+        function getFutureDate(days) {
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            return date.toLocaleDateString('ru-RU');
+        }
+        
+        // Обработка вкладок
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+        
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            initData();
+            
+            // Пример: помечаем фотоотчет как выполненный
+            setTimeout(() => {
+                document.querySelectorAll('.task-checkbox.checked').forEach(el => {
+                    el.classList.add('pulse');
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
